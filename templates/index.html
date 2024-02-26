@@ -38,9 +38,16 @@
      var myChart = echarts.init(chartDom);
      var option;
 
+     const initialWordCount = {{ word_count }} || 0;
      const initialTargetWords = {{ target_words }};
-     const initialWordCount = {{ word_count }};
 
+     function calcProgress(count, target) {
+         if (target == undefined || target == 0) {
+             return 0;
+         } else {
+             return count / target;
+         }
+     }
 
      function chartColor(progress) {
          if (progress > 1.0) {
@@ -190,10 +197,10 @@
              {
                  type: 'gauge',
                  min: 0,
-                 max: initialTargetWords,
+                 max: initialTargetWords || initialWordCount,
                  startAngle: 90,
                  endAngle: -270,
-                 color: chartColor(initialWordCount / initialTargetWords),
+                 color: chartColor(calcProgress(initialWordCount, initialTargetWords)),
                  fontFamily: "Helvetica, sans-serif",
                  pointer: {
                      show: false
@@ -240,7 +247,7 @@
              .then(data => {
                  const word_count = data.word_count;
                  let targetWords = data.target_words;
-                 let progressPercentage = word_count / targetWords;
+                 let progressPercentage = calcProgress(word_count, targetWords);
                  let color = chartColor(progressPercentage);
 
                  const gaugeData = [
@@ -258,7 +265,7 @@
                      series: [
                          {
                              data: gaugeData,
-                             max: targetWords,
+                             max: targetWords || word_count,
                              pointer: {
                                  show: false
                              },
