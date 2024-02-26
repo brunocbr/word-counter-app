@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Counter</title>
+    <!-- Include ECharts library -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+     #main {
+         width: 300px;
+         height: 300px;
+         background-color: #f5f5f5; /* Light Gray background */
+         margin: 0 auto;
+         padding: 20px;
+         border-radius: 10px;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         font-family: Helvetica, sans-serif;
+     }
+     #motivationalMessage {
+         text-align: center;
+         margin-top: 20px; /* Add some space above the message */
+         font-family: Helvetica, sans-serif;
+         font-size: large;
+         color: #2196F3;
+     }
+     #chart {
+         width: 300px;
+         height: 250px;
+     }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="chart"></div>
+        <div id="motivationalMessage"></div>
+    </div>
+    <script>
+     var chartDom = document.getElementById('chart');
+     var myChart = echarts.init(chartDom);
+     var option;
+
+     const initialTargetWords = {{ target_words }};
+     const initialWordCount = {{ word_count }};
+
+
+     function chartColor(progress) {
+         if (progress > 1.0) {
+             return '#f44336'; /* Red */
+         } else if (progress >= 0.9) {
+             return '#4caf50';  /* Green */
+         } else if (progress >= 0.1) {
+             return '#3f51b5'; /* Blue */
+         } else {
+             return '#64B5F6'; /* light blue */
+         }
+     }
+
+         // Get the system's current locale
+         const currentLocale = navigator.language || navigator.userLanguage;
+
+     const wordTranslations = {
+         'word': {
+             'en': {
+                 's': 'word',
+                 'p': 'words'
+             },  // English
+             'fr': {
+                 's': 'mot',
+                 'p': 'mots'
+             },    // French
+             'de': {
+                 's': 'Wort',
+                 'p': 'Wörter'
+             },   // German
+             'es': {
+                 's': 'palabra',
+                 'p': 'palabras'
+             },   // Spanish
+             'pt-BR': {
+                 's': 'palavra',
+                 'p': 'palavras'
+             }    // Brazilian Portuguese
+             // Add more languages as needed
+     }};
+
+     const motivationalMessages = {
+         'en': [
+             "Keep going! You're doing great!",
+             "You're almost there! Keep pushing!",
+             "You're making excellent progress!",
+             "You're on fire! Keep up the momentum!",
+             "You're a writing machine! Keep it up!"
+         ],
+         'fr': [
+             "Continuez comme ça ! Vous êtes génial !",
+             "Vous y êtes presque ! Continuez à pousser !",
+             "Vous faites des progrès excellents !",
+             "Vous êtes en feu ! Gardez le momentum !",
+             "Vous êtes une machine à écrire ! Continuez comme ça !"
+         ],
+         'es': [
+             "¡Sigue adelante! ¡Lo estás haciendo genial!",
+             "¡Casi lo logras! ¡Sigue adelante!",
+             "¡Estás haciendo un progreso excelente!",
+             "¡Estás en llamas! ¡Sigue así!",
+             "¡Eres una máquina de escribir! ¡Sigue así!"
+         ],
+         'pt': [
+             "Você está no caminho certo! Continue assim!",
+             "Cada palavra conta! Você está quase lá!",
+             "Seu progresso é impressionante, continue assim!",
+             "Você está arrasando! Mantenha o ritmo!",
+             "Você é incrível! Continue escrevendo!"
+         ],
+         'pt-BR': [
+             "Continue assim. Cada palavra é um passo em direção ao seu objetivo.",
+             "Você está fazendo um ótimo trabalho. Só mais um pouco e você chegará lá.",
+             "Seu progresso é impressionante. Continue assim.",
+             "Você está arrasando. Mantenha o ritmo.",
+             "Você é incrível. Continue escrevendo.",
+             "Continue assim. Cada palavra é um passo em direção ao seu objetivo.",
+             "Você está fazendo um ótimo trabalho. Só mais um pouco e você chegará lá.",
+             "Seu progresso é notável. Continue firme.",
+             "Está cada vez melhor. Não desista agora.",
+             "Você está se superando a cada palavra. Continue assim.",
+             "Cada parágrafo é uma conquista. Continue escrevendo.",
+             "Sua dedicação é inspiradora. Continue seguindo em frente.",
+             "Estou impressionado com sua persistência. Continue assim.",
+             "Você está no caminho certo. Continue avançando.",
+             "Cada página escrita é uma vitória. Continue firme.",
+             "Continue assim. O mundo está esperando para ler sua história.",
+             "Você está deixando sua marca. Continue escrevendo.",
+             "Sua criatividade está fluindo. Continue seguindo sua inspiração.",
+             "Você está escrevendo com o coração. Continue assim.",
+             "Cada capítulo é uma jornada. Continue escrevendo.",
+             "Seu talento é incrível. Continue compartilhando suas palavras.",
+             "Estou ansioso para ver onde sua escrita o levará. Continue assim.",
+             "Sua paixão pela escrita é inspiradora. Continue seguindo seus sonhos.",
+             "Continue assim. Sua história merece ser contada.",
+             "Cada palavra é uma obra-prima. Continue escrevendo.",
+             "Seu estilo único está brilhando. Continue assim.",
+             "Você está cativando seus leitores. Continue contando sua história.",
+             "Cada linha é um feito. Continue firme.",
+             "Estou torcendo por você a cada palavra. Continue escrevendo.",
+             "Sua determinação é admirável. Continue seguindo em frente.",
+             "Continue assim. Sua voz é única e importante.",
+             "Cada frase é uma inspiração. Continue compartilhando suas ideias.",
+             "Sua escrita é poderosa. Continue transmitindo sua mensagem.",
+             "Continue assim. Você está transformando pensamentos em palavras.",
+             "Seu talento é extraordinário. Continue escrevendo com paixão."
+         ],
+         'de': [
+             "Weiter so! Du machst das großartig!",
+             "Du bist fast da! Weiter so!",
+             "Du machst ausgezeichnete Fortschritte!",
+             "Du bist voll im Flow! Weiter so!",
+             "Du bist eine Schreibmaschine! Mach weiter so!"
+         ]
+     }
+
+
+     function getWord(word, count) {
+         const form = count > 1 ? 'p' : 's';
+         return wordTranslations[word][currentLocale][form]
+             || wordTranslations[word]['en'][form];
+     }
+
+     function getMessage(progressPercentage) {
+         const messages = motivationalMessages[currentLocale] || motivationalMessages['en']
+         let messageIndex = Math.floor(progressPercentage * messages.length);
+         return messages[messageIndex];
+     }
+
+     const gaugeData = [
+         {
+             value: initialWordCount,
+             name: getWord('word', initialWordCount),
+             detail: {
+                 valueAnimation: true,
+                 offsetCenter: ['0%', '0%']
+             }
+         }
+     ];
+
+     option = {
+         series: [
+             {
+                 type: 'gauge',
+                 min: 0,
+                 max: initialTargetWords,
+                 startAngle: 90,
+                 endAngle: -270,
+                 color: chartColor(initialWordCount / initialTargetWords),
+                 fontFamily: "Helvetica, sans-serif",
+                 pointer: {
+                     show: false
+                 },
+                 progress: {
+                     show: true,
+                     overlap: false,
+                     clip: true,
+                     itemStyle: {
+                         borderWidth: 0
+                     }
+                 },
+                 axisLine: {
+                     lineStyle: {
+                         width: 25
+                     }
+                 },
+                 splitLine: {
+                     show: false,
+                 },
+                 axisTick: {
+                     show: false
+                 },
+                 axisLabel: {
+                     show: false,
+                 },
+                 data: gaugeData,
+                 title: {
+                     fontSize: 14
+                 },
+                 detail: {
+                     fontSize: 32,
+                     color: 'inherit',
+                     borderColor: 'inherit',
+                     formatter: (value) => { return value.toLocaleString() }
+                 }
+             }
+         ]
+     };
+
+     function updateChart() {
+         fetch('/data')
+             .then(response => response.json())
+             .then(data => {
+                 const word_count = data.word_count;
+                 let targetWords = data.target_words;
+                 let progressPercentage = word_count / targetWords;
+                 let color = chartColor(progressPercentage);
+
+                 const gaugeData = [
+                     {
+                         value: word_count,
+                         name: getWord('word', word_count),
+                         detail: {
+                             valueAnimation: true,
+                             offsetCenter: ['0%', '0%']
+                         }
+                     }
+                 ];
+
+                 myChart.setOption({
+                     series: [
+                         {
+                             data: gaugeData,
+                             max: targetWords,
+                             pointer: {
+                                 show: false
+                             },
+                             color: color
+                         }]})
+
+                 // Update motivational messages based on progress
+                 let msgElement = document.getElementById('motivationalMessage');
+                 msgElement.style.color = color;
+                 msgElement.innerText = getMessage(progressPercentage);
+     })}
+
+     setInterval(updateChart, 4000);
+
+     option && myChart.setOption(option);
+    </script>
+</body>
+</html>
+
