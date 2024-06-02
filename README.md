@@ -42,7 +42,7 @@ To install the app and its dependencies:
 To run the app, use the following command, setting the `TEXTFILE` environment variable to the path of your Markdown file:
 
 ```bash
-TEXTFILE=your_markdown_file.md python word_counter_app.py
+TEXTFILE=your_markdown_file.md venv/bin/gunicorn -w 1 -b 127.0.0.1:8008 word_counter_app:app
 ```
 
 Replace `your_markdown_file.md` with the path to your Markdown file.
