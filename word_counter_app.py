@@ -11,16 +11,23 @@ def count_words(text):
     words = re.findall(r'\b\w+\b', text)
     return len(words)
 
+def remove_markdown_footnotes(text):
+    lines = text.split('\n')
+    cleaned_lines = [line for line in lines if not line.lstrip().startswith('[^') and ']: ' not in line]
+    return '\n' + '\n'.join(cleaned_lines)
+
+
 def extract_data(path):
     with open(path, 'r', encoding='utf-8') as file:
         content = file.read()
 
     _, yaml_header, body = re.split(r'[\.-]{3}\n', content, 2)
 
+
     metadata = yaml.safe_load(yaml_header)
     target_words = metadata.get('target_words', 0)
 
-    word_count = count_words(body)
+    word_count = count_words(remove_markdown_footnotes(body))
 
     return (word_count, target_words)
 
