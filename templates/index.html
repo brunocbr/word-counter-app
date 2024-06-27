@@ -17,7 +17,7 @@
      }
      #motivationalMessage {
          text-align: center;
-         margin-top: 5px; /* Add some space above the message */
+         margin-top: 0px; /* Add some space above the message */
          font-family: Helvetica, sans-serif;
          font-size: small;
          color: #2196F3;
@@ -169,16 +169,68 @@
      }
 
 
+     const cutTheTextMessages = {
+         'en': [
+             "Great work! Let's refine this and make every word count.",
+             "Almost there! Less is more. Highlight what really matters.",
+             "Excellent progress! Cut words to make your text more powerful.",
+             "Impressive! Remove unnecessary words and highlight the main ideas.",
+             "Congratulations! Make your message clearer and more impactful."
+         ],
+         'fr': [
+             "Excellent travail! Affinons ce message et faisons chaque mot compter.",
+             "Presque là! Moins, c'est mieux. Mettez en avant l'essentiel.",
+             "Excellents progrès! Coupez quelques mots pour rendre le texte puissant.",
+             "Impressionnant! Supprimez les mots inutiles et mettez en avant les idées.",
+             "Félicitations! Rendons votre message clair et percutant."
+         ],
+         'es': [
+             "¡Gran trabajo! Refina esto y haz que cada palabra cuente.",
+             "¡Casi lo logras! Menos es más. Destaca lo importante.",
+             "¡Excelente progreso! Recorta palabras para hacer tu texto poderoso.",
+             "¡Impresionante! Elimina palabras innecesarias y resalta las ideas.",
+             "¡Felicidades! Haz tu mensaje claro e impactante."
+         ],
+         'pt': [
+             "Ótimo trabalho! Vamos refinar e garantir impacto.",
+             "Quase lá! Menos é mais. Destaque o importante.",
+             "Excelente progresso! Corte palavras para deixar o texto poderoso.",
+             "Impressionante! Remova palavras desnecessárias e destaque ideias.",
+             "Parabéns! Torne sua mensagem clara e impactante."
+         ],
+         'pt-BR': [
+             "Ótimo trabalho! Vamos refinar e garantir impacto.",
+             "Quase lá! Menos é mais. Destaque o importante.",
+             "Excelente progresso! Corte palavras para deixar o texto poderoso.",
+             "Impressionante! Remova palavras desnecessárias e destaque ideias.",
+             "Parabéns! Torne sua mensagem clara e impactante."
+         ],
+         'de': [
+             "Großartige Arbeit! Lass uns jedes Wort zählen lassen.",
+             "Fast geschafft! Weniger ist mehr. Hebe das Wesentliche hervor.",
+             "Ausgezeichnete Fortschritte! Kürze Wörter für einen kraftvollen Text.",
+             "Beeindruckend! Entferne unnötige Wörter und hebe die Hauptideen hervor.",
+             "Glückwunsch! Mache deine Botschaft klarer und eindrucksvoller."
+         ]
+     };
+
      function getWord(word, count) {
          const form = count > 1 ? 'p' : 's';
          return wordTranslations[word][currentLocale][form]
              || wordTranslations[word]['en'][form];
      }
 
-     function getMessage(progressPercentage) {
-         const messages = motivationalMessages[currentLocale] || motivationalMessages['en']
-         let messageIndex = Math.floor(progressPercentage * messages.length);
-         return messages[messageIndex];
+     function getMessage(progress) {
+         // Usar mensagens de corte se o progresso exceder o comprimento das mensagens motivacionais
+         const messages = progress >= 1
+                        ? cutTheTextMessages[currentLocale] || cutTheTextMessages['en']
+                        : motivationalMessages[currentLocale] || motivationalMessages['en'];
+
+         p = progress >= 1 ? progress - 1.0 : progress
+
+         // Garantir que o índice não exceda o comprimento das mensagens disponíveis
+         let messageIndex = Math.floor(p * messages.length);
+         return messages[messageIndex] || '😵';
      }
 
      const gaugeData = [
